@@ -1,7 +1,6 @@
-sys = require("sys")
-
 chatRoom =
-  addMessage: (user, message) ->
-    sys.puts("#{user}:#{message}")
+  addMessage: (user, message, callback) ->
+    if !user
+      callback(new TypeError("user is null"))
 
 module.exports = chatRoom
