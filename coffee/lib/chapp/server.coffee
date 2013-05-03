@@ -5,8 +5,6 @@ url = require('url')
 crController = require("chapp/chat_room_controller")
 
 # http.createServer accepts a -> which will be attached as the request listener
-#
- Then,
 module.exports = http.createServer (req, res) ->
   # For any request to the /comet URL
   if url.parse(req.url).pathname is "/comet"
