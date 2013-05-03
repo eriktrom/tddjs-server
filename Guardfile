@@ -1,4 +1,4 @@
-coffee_files = ->{watch('coffee/.+\.coffee')}
+coffee_files = ->{watch("coffee/**/*.coffee")}
 
 guard('process',
       name: 'compile coffee files',
@@ -8,7 +8,7 @@ guard('process',
 end
 
 guard 'process', name: 'run node tests',
-      command: './run_tests' do
+      command: 'mocha' do
   coffee_files.()
 end
 

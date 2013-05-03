@@ -1,7 +1,6 @@
-testCase = require("nodeunit").testCase
+expect = require('chai').expect
 chatRoomController = require('../../lib/chapp/chat_room_controller')
 
-exports.testchatRoomController = (test) ->
-  test.isNotNull(chatRoomController)
-  test.isFunction(chatRoomController.create)
-  test.done()
+describe "chatRoomController", ->
+  it "should be an object", ->
+    expect(chatRoomController).to.be.an('object')
