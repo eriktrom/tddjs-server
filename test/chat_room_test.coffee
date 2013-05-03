@@ -22,3 +22,8 @@ describe "chatRoom.addMessage", ->
       assert.isNotNull(err)
       assert.ok err instanceof TypeError
       done()
+
+  it "should not require a callback", (done) ->
+    assert.doesNotThrow =>
+      @room.addMessage()
+      done()

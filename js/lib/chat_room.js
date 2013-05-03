@@ -3,11 +3,16 @@ var chatRoom;
 
 chatRoom = {
   addMessage: function(user, message, callback) {
+    var err;
+
     if (!user) {
-      callback(new TypeError("user is null"));
+      err = new TypeError("user is null");
     }
     if (!message) {
-      return callback(new TypeError("message is null"));
+      err = new TypeError("message is null");
+    }
+    if (typeof callback === "function") {
+      return callback(err);
     }
   }
 };
