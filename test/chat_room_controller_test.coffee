@@ -18,8 +18,6 @@ describe "chatRoomController", ->
       done()
 
     beforeEach ->
-      @reqDbl = {double: 'req'}
-      @resDbl = {double: 'res'}
       @controller = chatRoomController.create(@reqDbl, @resDbl)
 
     it "inherits from chatRoomController (has the same prototype)", (done) ->
@@ -28,14 +26,20 @@ describe "chatRoomController", ->
       assert.ok @controller:: == chatRoomController::
       done()
 
-    describe "#request", (done) ->
-      it "it is set during creation by request arg given to #create", (done) ->
-        assert.deepEqual @controller.request, @reqDbl
-        # SAME AS #
-        expect(@controller.request).to.eql(@reqDbl)
-        done()
+    context "it returns an object with properties #request & #response", ->
 
-    describe "#response", (done) ->
-      it "is set during creation by response arg given to #create", (done) ->
-        expect(@controller.response).to.deep.equal(@resDbl)
-        done()
+      beforeEach ->
+        @reqDbl = {double: 'req'}
+        @resDbl = {double: 'res'}
+
+      describe "#request", (done) ->
+        it "it is set during creation by request arg given to #create", (done) ->
+          assert.deepEqual @controller.request, @reqDbl
+          # SAME AS #
+          expect(@controller.request).to.eql(@reqDbl)
+          done()
+
+      describe "#response", (done) ->
+        it "is set during creation by response arg given to #create", (done) ->
+          expect(@controller.response).to.deep.equal(@resDbl)
+          done()
