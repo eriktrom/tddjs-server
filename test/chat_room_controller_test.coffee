@@ -12,7 +12,7 @@ stub = require("../js/lib/stub")
 controllerSetUp = ->
   # stub the request and response (request is an event emitter)
   reqDbl = @reqDbl = new EventEmitter()
-  resDbl = @resDbl = {writeHead: stub()}
+  resDbl = @resDbl = {writeHead: stub(), end: stub()}
   # create real controller, passing it reqDbl & resDbl
   @controller = chatRoomController.create(reqDbl, resDbl)
   @jsonParse = JSON.parse
@@ -96,4 +96,11 @@ describe "chatRoomController", ->
 
       assert.ok @resDbl.writeHead.called
       assert.deepEqual @resDbl.writeHead.args[0], 201
+      done()
+
+    it "should close the connection", (done) ->
+      @controller.post()
+      @sendRequest(@dataDbl)
+
+      assert.ok @resDbl.end.called
       done()

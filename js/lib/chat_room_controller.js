@@ -26,7 +26,8 @@ chatRoomController = {
 
       data = JSON.parse(decodeURI(body)).data;
       this.chatRoom.addMessage(data.user, data.message);
-      return this.response.writeHead(201);
+      this.response.writeHead(201);
+      return this.response.end();
     }).bind(this));
   }
 };

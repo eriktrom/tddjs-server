@@ -16,6 +16,7 @@ chatRoomController =
       data = JSON.parse(decodeURI(body)).data
       @chatRoom.addMessage(data.user, data.message)
       @response.writeHead(201)
+      @response.end()
     ).bind(@)
 
 module.exports = chatRoomController
