@@ -3,4 +3,10 @@ var chatRoomController, testCase;
 
 testCase = require("nodeunit").testCase;
 
-chatRoomController = require('chapp/chat_room_controller');
+chatRoomController = require('../../lib/chapp/chat_room_controller');
+
+exports.testchatRoomController = function(test) {
+  test.isNotNull(chatRoomController);
+  test.isFunction(chatRoomController.create);
+  return test.done();
+};
