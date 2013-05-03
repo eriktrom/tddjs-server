@@ -17,6 +17,7 @@ controllerSetUp = ->
   @controller = chatRoomController.create(reqDbl, resDbl)
   @jsonParse = JSON.parse
 
+
 controllerTearDown = ->
   JSON.parse = @jsonParse
 
@@ -57,6 +58,14 @@ describe "chatRoomController", ->
       # stub out some data to be returned by JSON.parse
       @dataDbl = {data: {user: "erik", message: "sup"}}
       @controller.chatRoom = {addMessage: stub()}
+      @sendRequest = (data) ->
+        # tddjs.ajax tools build in prev chpts currently only support URL encoded
+        # data, so lets encode it to fit
+        strDbl = encodeURI(JSON.stringify(@dataDbl))
+        # emit simple URL encoded JSON string in two chunks, then emit end event
+        @reqDbl.emit("data", strDbl.substring(0, strDbl.length/2))
+        @reqDbl.emit("data", strDbl.substring(strDbl.length/2))
+        @reqDbl.emit("end")
 
     it "should retrieve the request body by concatenating its evented chunks", (done) ->
       # stub JSON.parse to return @dataDbl and spy on calls & their arguments
@@ -64,14 +73,7 @@ describe "chatRoomController", ->
 
       # when i call post on the controller
       @controller.post()
-
-      # tddjs.ajax tools build in prev chpts currently only support URL encoded
-      # data, so lets encode it to fit
-      strDbl = encodeURI(JSON.stringify(@dataDbl))
-      # emit simple URL encoded JSON string in two chunks, then emit end event
-      @reqDbl.emit("data", strDbl.substring(0, strDbl.length/2))
-      @reqDbl.emit("data", strDbl.substring(strDbl.length/2))
-      @reqDbl.emit("end")
+      @sendRequest(@dataDbl)
 
       # then JSON.parse should have been called with stubbed data stub data
       assert.deepEqual JSON.parse.args[0], JSON.stringify(@dataDbl)
@@ -79,13 +81,11 @@ describe "chatRoomController", ->
 
     it "adds the message from the request body to the chat room", (done) ->
       @controller.post()
-      @reqDbl.emit "data", encodeURI(JSON.stringify(@dataDbl))
-      @reqDbl.emit "end"
+      @sendRequest(@dataDbl)
 
       # controller should have called chatRoom.addMessage with the correct args
       assert.ok @controller.chatRoom.addMessage.called
       args = @controller.chatRoom.addMessage.args
       assert.deepEqual args[0], @dataDbl.data.user
       assert.deepEqual args[1], @dataDbl.data.message
-
       done()
