@@ -12,7 +12,7 @@ stub = require("../js/lib/stub")
 controllerSetUp = ->
   # stub the request and response (request is an event emitter)
   reqDbl = @reqDbl = new EventEmitter()
-  resDbl = @resDbl = {double: "resDbl"}
+  resDbl = @resDbl = {writeHead: stub()}
   # create real controller, passing it reqDbl & resDbl
   @controller = chatRoomController.create(reqDbl, resDbl)
   @jsonParse = JSON.parse
@@ -88,4 +88,12 @@ describe "chatRoomController", ->
       args = @controller.chatRoom.addMessage.args
       assert.deepEqual args[0], @dataDbl.data.user
       assert.deepEqual args[1], @dataDbl.data.message
+      done()
+
+    it "should write the status http header", (done) ->
+      @controller.post()
+      @sendRequest(@dataDbl)
+
+      assert.ok @resDbl.writeHead.called
+      assert.deepEqual @resDbl.writeHead.args[0], 201
       done()
