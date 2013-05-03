@@ -1,3 +1,5 @@
+require("./function-bind")
+
 chatRoomController =
   create: (request, response) ->
     Object.create @,
@@ -10,7 +12,9 @@ chatRoomController =
     @request.addListener "data", (chunk) ->
       body += chunk
 
-    @request.addListener "end", ->
-      JSON.parse(decodeURI(body))
+    @request.addListener "end", (->
+      data = JSON.parse(decodeURI(body)).data
+      @chatRoom.addMessage(data.user, data.message)
+    ).bind(@)
 
 module.exports = chatRoomController
