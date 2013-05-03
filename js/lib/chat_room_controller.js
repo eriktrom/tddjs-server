@@ -11,6 +11,17 @@ chatRoomController = {
         value: response
       }
     });
+  },
+  post: function() {
+    var body;
+
+    body = "";
+    this.request.addListener("data", function(chunk) {
+      return body += chunk;
+    });
+    return this.request.addListener("end", function() {
+      return JSON.parse(decodeURI(body));
+    });
   }
 };
 

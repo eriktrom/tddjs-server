@@ -6,6 +6,8 @@ chai.Assertion.includeStack = true
 
 
 chatRoomController = require('../js/lib/chat_room_controller')
+EventEmitter = require("events").EventEmitter
+stub = require("../js/lib/stub")
 
 describe "chatRoomController", ->
   it "should be an object", (done) ->
@@ -18,6 +20,8 @@ describe "chatRoomController", ->
       done()
 
     beforeEach ->
+      @reqDbl = {double: 'req'}
+      @resDbl = {double: 'res'}
       @controller = chatRoomController.create(@reqDbl, @resDbl)
 
     it "inherits from chatRoomController (has the same prototype)", (done) ->
@@ -26,12 +30,8 @@ describe "chatRoomController", ->
       assert.ok @controller:: == chatRoomController::
       done()
 
+    # TODO: clean me up
     context "it returns an object with properties #request & #response", ->
-
-      beforeEach ->
-        @reqDbl = {double: 'req'}
-        @resDbl = {double: 'res'}
-
       describe "#request", (done) ->
         it "it is set during creation by request arg given to #create", (done) ->
           assert.deepEqual @controller.request, @reqDbl
@@ -43,3 +43,33 @@ describe "chatRoomController", ->
         it "is set during creation by response arg given to #create", (done) ->
           expect(@controller.response).to.deep.equal(@resDbl)
           done()
+
+  describe "#post", ->
+    beforeEach -> @jsonParse = JSON.parse
+    afterEach -> JSON.parse = @jsonParse
+    it "should retrieve the request body by concatenating its evented chunks", (done) ->
+      # stub the request and response (request is an event emitter)
+      reqDbl = new EventEmitter()
+      resDbl = {double: "resDbl"}
+      # create real controller, passing it reqDbl & resDbl
+      controller = chatRoomController.create(reqDbl, resDbl)
+      # stub out some data to be returned by JSON.parse
+      dataDbl = {data: {user: "erik", message: "sup"}}
+      # manually convert the dataDbl to JSON string, will become expected arg
+      stringDataDbl = JSON.stringify(dataDbl)
+      # tddjs.ajax tools build in prev chpts currently only support URL encoded
+      # data, so lets encode it to fit
+      strDbl = encodeURI(stringDataDbl)
+      # stub JSON.parse to return dataDbl and spy on calls & their arguments
+      JSON.parse = stub(dataDbl)
+
+      # when i call post on the controller
+      controller.post()
+      # emit simple URL encoded JSON string in two chunks, then emit end event
+      reqDbl.emit("data", strDbl.substring(0, strDbl.length/2))
+      reqDbl.emit("data", strDbl.substring(strDbl.length/2))
+      reqDbl.emit("end")
+
+      # then JSON.parse should have been called with stubbed data stub data
+      assert.deepEqual JSON.parse.args[0], stringDataDbl
+      done()
