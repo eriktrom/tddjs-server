@@ -28,12 +28,14 @@ describe "chatRoomController", ->
       assert.ok @controller:: == chatRoomController::
       done()
 
-    it "returns an object with request property === to passed request arg", (done) ->
-      assert.deepEqual @controller.request, @reqDbl
-      # SAME AS #
-      expect(@controller.request).to.eql(@reqDbl)
-      done()
+    describe "#request", (done) ->
+      it "it is set during creation by request arg given to #create", (done) ->
+        assert.deepEqual @controller.request, @reqDbl
+        # SAME AS #
+        expect(@controller.request).to.eql(@reqDbl)
+        done()
 
-    it "returns an object with response property === to passed response arg", (done) ->
-      expect(@controller.response).to.deep.equal(@resDbl)
-      done()
+    describe "#response", (done) ->
+      it "is set during creation by response arg given to #create", (done) ->
+        expect(@controller.response).to.deep.equal(@resDbl)
+        done()
