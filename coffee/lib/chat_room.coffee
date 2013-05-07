@@ -6,14 +6,14 @@ chatRoom =
     if !user    then err = new TypeError("user is null")
     if !msgtext then err = new TypeError("Message text is null")
     if !err
-      @id ?= 1
-      message = {id: @id++, user: user, msgtext: msgtext}
       @messages ?= []
+      id = @messages.length + 1
+      message = {id, user, msgtext}
       @messages.push(message)
 
     callback(err, message) if typeof callback is "function"
 
   getMessagesSince: (id, callback) ->
-    callback(null, @messages[id..])
+    callback(null, @messages.slice(id))
 
 module.exports = chatRoom

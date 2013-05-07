@@ -3,7 +3,7 @@ var chatRoom;
 
 chatRoom = {
   addMessage: function(user, msgtext, callback) {
-    var err, message, _ref, _ref1;
+    var err, id, message, _ref;
 
     if (!user) {
       err = new TypeError("user is null");
@@ -12,17 +12,15 @@ chatRoom = {
       err = new TypeError("Message text is null");
     }
     if (!err) {
-      if ((_ref = this.id) == null) {
-        this.id = 1;
+      if ((_ref = this.messages) == null) {
+        this.messages = [];
       }
+      id = this.messages.length + 1;
       message = {
-        id: this.id++,
+        id: id,
         user: user,
         msgtext: msgtext
       };
-      if ((_ref1 = this.messages) == null) {
-        this.messages = [];
-      }
       this.messages.push(message);
     }
     if (typeof callback === "function") {
