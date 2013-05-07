@@ -12,7 +12,11 @@ describe "chatRoom", ->
 
   describe "#addMessage", ->
     it "should require a username", (done) ->
-      @room.addMessage null, "a message", (err) =>
+      promise = @room.addMessage null, "a message"
+
+      promise.then ->
+      ,
+      (err) ->
         assert.isNotNull(err)
         assert.ok err.constructor is TypeError
         # SAME AS #

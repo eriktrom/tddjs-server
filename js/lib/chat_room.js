@@ -7,6 +7,9 @@ Q = require('q');
 
 chatRoom = {
   addMessage: function(user, msgtext, callback) {
+    var deferred;
+
+    deferred = Q.defer();
     process.nextTick((function() {
       var err, id, message, _ref;
 
@@ -15,6 +18,9 @@ chatRoom = {
       }
       if (!msgtext) {
         err = new TypeError("Message text is null");
+      }
+      if (err) {
+        deferred.reject(err, true);
       }
       if (!err) {
         if ((_ref = this.messages) == null) {
@@ -32,7 +38,7 @@ chatRoom = {
         return callback(err, message);
       }
     }).bind(this));
-    return Q.defer().promise;
+    return deferred.promise;
   },
   getMessagesSince: function(id, callback) {
     var _ref;

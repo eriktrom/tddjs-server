@@ -3,9 +3,13 @@ Q = require('q')
 
 chatRoom =
   addMessage: (user, msgtext, callback) ->
+    deferred = Q.defer()
     process.nextTick (->
-      if !user    then err = new TypeError("user is null")
-      if !msgtext then err = new TypeError("Message text is null")
+      err = new TypeError("user is null") if !user
+      err = new TypeError("Message text is null") if !msgtext
+      if err
+        deferred.reject(err, true)
+
       if !err
         @messages ?= []
         id = @messages.length + 1
@@ -14,8 +18,8 @@ chatRoom =
 
       callback(err, message) if typeof callback is "function"
     ).bind(@)
+    deferred.promise
 
-    Q.defer().promise
 
   getMessagesSince: (id, callback) ->
     @messages ?= []
