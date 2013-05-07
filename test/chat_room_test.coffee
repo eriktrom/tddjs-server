@@ -8,8 +8,6 @@ chatRoom = require("../js/lib/chat_room")
 describe "chatRoom#addMessage", ->
   beforeEach ->
     @room = Object.create(chatRoom)
-  # afterEach ->
-  #   @room.messages = null
 
   it "should require a username", (done) ->
     @room.addMessage null, "a message", (err) =>
@@ -47,16 +45,16 @@ describe "chatRoom#addMessage", ->
         done()
 
   it "should add the message to the room's messages array", (done) ->
-    @room.addMessage "erik", "An awesome message", (e, msg1) =>
+    @room.addMessage "erik", "message 1", (e, msg1) =>
       assert.deepEqual @room.messages, [msg1]
-      @room.addMessage "erik", "A second fabulous message", (e, msg2) =>
+      @room.addMessage "erik", "message 2", (e, msg2) =>
         assert.deepEqual @room.messages, [msg1, msg2]
         done()
 
 
 describe "chatRoom#getMessagesSince", ->
 
-  it.skip "should get messages since given id", (done) ->
+  it "should get messages since given id", (done) ->
     room = Object.create(chatRoom)
     user = "erik"
 
@@ -64,5 +62,5 @@ describe "chatRoom#getMessagesSince", ->
       room.addMessage user, "message 2", (e, msg2) ->
         room.getMessagesSince msg1.id, (e, msgs) ->
           assert.isArray msgs
-          assert.strictEqual msgs, [msg2]
+          assert.deepEqual msgs, [msg2]
           done()
