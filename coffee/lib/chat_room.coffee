@@ -1,4 +1,5 @@
 require("./function-bind")
+Q = require('q')
 
 chatRoom =
   addMessage: (user, msgtext, callback) ->
@@ -13,6 +14,8 @@ chatRoom =
 
       callback(err, message) if typeof callback is "function"
     ).bind(@)
+
+    Q.defer().promise
 
   getMessagesSince: (id, callback) ->
     @messages ?= []
