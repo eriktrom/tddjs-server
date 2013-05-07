@@ -35,3 +35,11 @@ describe "chatRoom#addMessage", ->
       assert.equal data.message, "Some message"
       assert.equal data.user, "erik"
       done()
+
+  it "should assign unique id's to messages", (done) ->
+    user = "erik"
+
+    @room.addMessage user, "message a", (err, data1) =>
+      @room.addMessage user, "message b", (err, data2) ->
+        assert.notEqual data1.id, data2.id
+        done()
