@@ -48,11 +48,32 @@ describe "chatRoom", ->
 
     it "should add the message to the room's messages array", (done) ->
       @room.addMessage "erik", "message 1", (e, msg1) =>
+        # checking the @room.messages array directly is frowned upon as it
+        # tests implementation details that we don't really care about
+        # and makes our test fragile
         assert.deepEqual @room.messages, [msg1]
         @room.addMessage "erik", "message 2", (e, msg2) =>
           assert.deepEqual @room.messages, [msg1, msg2]
           done()
 
+    it "should be asynchronous", (done) ->
+      id = null
+      @room.addMessage "erik", "Some message", (err, msg) ->
+        id = msg.id
+
+      # here, we grab all messages since before the previous one was added
+      # thus, in a synchronous world, msgs.length should eq 1, but in an
+      # asynchronous world, it should still equal 0 b/c if addMessage were
+      # async, it would not run it's callback until the next turn of the event
+      # loop, and thus, until after done() is called. this test therefore proves
+      # that the messages array is still emtpy and that therefore its async
+      #
+      # this test falls under the same category as the previous - namely, it
+      # tests implementation details. it should be removed, we'll use promises
+      # instead
+      @room.getMessagesSince id - 1, (err, msgs) ->
+        assert.equal msgs.length, 0
+        done()
 
   describe "#getMessagesSince", ->
     it "should get messages since given id", (done) ->

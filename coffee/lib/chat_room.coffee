@@ -1,17 +1,18 @@
-
-
+require("./function-bind")
 
 chatRoom =
   addMessage: (user, msgtext, callback) ->
-    if !user    then err = new TypeError("user is null")
-    if !msgtext then err = new TypeError("Message text is null")
-    if !err
-      @messages ?= []
-      id = @messages.length + 1
-      message = {id, user, msgtext}
-      @messages.push(message)
+    process.nextTick (->
+      if !user    then err = new TypeError("user is null")
+      if !msgtext then err = new TypeError("Message text is null")
+      if !err
+        @messages ?= []
+        id = @messages.length + 1
+        message = {id, user, msgtext}
+        @messages.push(message)
 
-    callback(err, message) if typeof callback is "function"
+      callback(err, message) if typeof callback is "function"
+    ).bind(@)
 
   getMessagesSince: (id, callback) ->
     @messages ?= []
