@@ -1,7 +1,9 @@
 require("./function-bind")
+Q = require("q")
 
 chatRoom =
   addMessage: (user, msgtext, callback) ->
+    deferred = Q.defer()
     process.nextTick (->
       err = new TypeError("user is null") if !user
       err = new TypeError("Message text is null") if !msgtext
@@ -13,6 +15,7 @@ chatRoom =
 
       callback(err, message) if typeof callback is "function"
     ).bind(@)
+    deferred.promise
 
   getMessagesSince: (id, callback) ->
     callback(null, (@messages || []).slice(id))

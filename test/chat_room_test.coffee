@@ -75,6 +75,13 @@ describe "chatRoom", ->
         assert.equal msgs.length, 0
         done()
 
+    it "should return a promise", (done) ->
+      result = @room.addMessage("erik", "A message")
+
+      assert.isObject result
+      assert.isFunction result.then
+      done()
+
   describe "#getMessagesSince", ->
     it "should get messages since given id", (done) ->
       user = "erik"
