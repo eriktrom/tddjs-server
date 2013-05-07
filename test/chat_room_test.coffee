@@ -24,7 +24,8 @@ describe "chatRoom", ->
         done()
 
     it "should require a message", (done) ->
-      @room.addMessage "trombom", null, (err) =>
+      promise = @room.addMessage "trombom", null
+      promise.fail (err) -> # Notice the diff from previous, use of fail only
         assert.isNotNull(err)
         assert.ok err instanceof TypeError
         done()

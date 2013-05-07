@@ -8,7 +8,7 @@ chatRoom =
       err = new TypeError("user is null") if !user
       err = new TypeError("Message text is null") if !msgtext
       if err
-        deferred.reject(err, true)
+        deferred.reject(err)
 
       if !err
         @messages ?= []

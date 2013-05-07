@@ -20,7 +20,7 @@ chatRoom = {
         err = new TypeError("Message text is null");
       }
       if (err) {
-        deferred.reject(err, true);
+        deferred.reject(err);
       }
       if (!err) {
         if ((_ref = this.messages) == null) {
