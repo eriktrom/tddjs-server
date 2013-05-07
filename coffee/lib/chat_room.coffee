@@ -8,15 +8,14 @@ chatRoom =
       err = new TypeError("user is null") if !user
       err = new TypeError("Message text is null") if !msgtext
       if err
-        deferred.reject(err)
+        deferred.reject(err, true)
 
       if !err
         @messages ?= []
         id = @messages.length + 1
         message = {id, user, msgtext}
         @messages.push(message)
-
-      callback(err, message) if typeof callback is "function"
+        deferred.resolve(message)
     ).bind(@)
     deferred.promise
 

@@ -20,7 +20,7 @@ chatRoom = {
         err = new TypeError("Message text is null");
       }
       if (err) {
-        deferred.reject(err);
+        deferred.reject(err, true);
       }
       if (!err) {
         if ((_ref = this.messages) == null) {
@@ -33,9 +33,7 @@ chatRoom = {
           msgtext: msgtext
         };
         this.messages.push(message);
-      }
-      if (typeof callback === "function") {
-        return callback(err, message);
+        return deferred.resolve(message);
       }
     }).bind(this));
     return deferred.promise;
