@@ -8,6 +8,11 @@ chatRoom = require("../js/lib/chat_room")
 
 describe "chatRoom", ->
 
+  it "should be an event emmitter", (done) ->
+    assert.isFunction chatRoom.addListener
+    assert.isFunction chatRoom.emit
+    done()
+
   beforeEach ->
     @room = Object.create(chatRoom)
 
@@ -178,3 +183,4 @@ describe "chatRoom", ->
         .then (msgs) ->
           assert.deepEqual msgs, []
           done()
+
