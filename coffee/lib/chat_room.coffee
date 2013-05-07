@@ -30,12 +30,15 @@ chatRoom = Object.create EventEmitter::,
 
 
   getMessagesSince:
-    value: (id, callback) ->
+    value: (id) ->
       deferred = Q.defer()
-      @messages ?= []
       process.nextTick (->
-        deferred.resolve(@messages.slice(id))
+        deferred.resolve((@messages || []).slice(id))
       ).bind(@)
       deferred.promise
+
+  waitForMessagesSince:
+    value: (id) ->
+      @getMessagesSince(id)
 
 module.exports = chatRoom

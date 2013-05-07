@@ -44,17 +44,19 @@ chatRoom = Object.create(EventEmitter.prototype, {
     }
   },
   getMessagesSince: {
-    value: function(id, callback) {
-      var deferred, _ref;
+    value: function(id) {
+      var deferred;
 
       deferred = Q.defer();
-      if ((_ref = this.messages) == null) {
-        this.messages = [];
-      }
       process.nextTick((function() {
-        return deferred.resolve(this.messages.slice(id));
+        return deferred.resolve((this.messages || []).slice(id));
       }).bind(this));
       return deferred.promise;
+    }
+  },
+  waitForMessagesSince: {
+    value: function(id) {
+      return this.getMessagesSince(id);
     }
   }
 });

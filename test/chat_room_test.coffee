@@ -3,6 +3,7 @@ expect = chai.expect
 assert = chai.assert
 # chai.Assertion.includeStack = true
 Q = require('q')
+stub = require('../js/lib/stub')
 
 chatRoom = require("../js/lib/chat_room")
 
@@ -196,3 +197,14 @@ describe "chatRoom", ->
           assert.deepEqual msgs, []
           done()
 
+  describe "#waitForMessagesSince", ->
+    it "should yield any existing messages", (done) ->
+      deferred = Q.defer()
+      deferred.resolve([{id: 43}])
+      @room.getMessagesSince = stub(deferred.promise)
+
+      @room.waitForMessagesSince(42)
+      .then (m) ->
+        assert.strictEqual m, [{id: 43}]
+        done()
+      .done()
