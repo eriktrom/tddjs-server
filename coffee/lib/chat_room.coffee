@@ -14,6 +14,7 @@ chatRoom =
     callback(err, message) if typeof callback is "function"
 
   getMessagesSince: (id, callback) ->
+    @messages ?= []
     callback(null, @messages.slice(id))
 
 module.exports = chatRoom

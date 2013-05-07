@@ -28,6 +28,11 @@ chatRoom = {
     }
   },
   getMessagesSince: function(id, callback) {
+    var _ref;
+
+    if ((_ref = this.messages) == null) {
+      this.messages = [];
+    }
     return callback(null, this.messages.slice(id));
   }
 };

@@ -63,3 +63,14 @@ describe "chatRoom", ->
             assert.isArray msgs
             assert.deepEqual msgs, [msg2]
             done()
+
+    it "should yield an emtpy array if the messages array does not exist", (done) ->
+      @room.getMessagesSince 1, (e, msgs) ->
+        assert.deepEqual msgs, []
+        done()
+
+    it "should yield an empty array if no relevant messages exist", (done) ->
+      @room.addMessage "erik", "message 1", (e, msg1) =>
+        @room.getMessagesSince msg1.id, (e, msgs) ->
+          assert.deepEqual msgs, []
+          done()
