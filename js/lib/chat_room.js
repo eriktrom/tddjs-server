@@ -19,6 +19,9 @@ chatRoom = {
       if (!msgtext) {
         err = new TypeError("Message text is null");
       }
+      if (err) {
+        deferred.reject(err);
+      }
       if (!err) {
         this.messages || (this.messages = []);
         id = this.messages.length + 1;

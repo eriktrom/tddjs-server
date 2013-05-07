@@ -12,22 +12,22 @@ describe "chatRoom", ->
 
   describe "#addMessage", ->
     it "should require a username", (done) ->
-      @room.addMessage null, "a message", (err) =>
+      @room.addMessage(null, "a message")
+      .then null, (err) ->
         assert.isNotNull(err)
-        assert.ok err.constructor is TypeError
-        # SAME AS #
-        assert.ok err instanceof TypeError
+        expect(err).to.be.instanceOf(TypeError)
         done()
 
     it "should require a message", (done) ->
-      @room.addMessage "trombom", null, (err) =>
+      @room.addMessage("trombom", null)
+      .then null, (err) ->
         assert.isNotNull(err)
-        assert.ok err instanceof TypeError
+        expect(err).to.be.instanceOf(TypeError)
         done()
 
     it "should not require a callback", (done) ->
       assert.doesNotThrow =>
-        @room.addMessage()
+        @room.addMessage("erik", "a message")
         done()
 
     it "should call callback with new msg object", (done) ->
