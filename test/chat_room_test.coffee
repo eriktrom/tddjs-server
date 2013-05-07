@@ -16,7 +16,10 @@ describe "chatRoom", ->
 
 
       promise.then ->
+        #no onFulfilled handler here
       ,
+      # promise's reason is first arg of onRejected, aka, onRejected(reason)
+      # so err = reason for error
       (err) ->
         assert.isNotNull(err)
         assert.ok err.constructor is TypeError
@@ -31,14 +34,18 @@ describe "chatRoom", ->
         assert.ok err instanceof TypeError
         done()
 
-    it "should not require a callback", (done) ->
+    it.skip "should not require a callback", (done) ->
+      # TODO: do something with promises here
       assert.doesNotThrow =>
         @room.addMessage()
         done()
 
     # TODO: understand how this works
     it "should call callback with new msg object", (done) ->
-      @room.addMessage("erik", "Some message").then (msg) ->
+      @room.addMessage("erik", "Some message")
+      # promise's value is first arg of onFulfilled
+      # so msg = value of promise
+      .then (msg) ->
         assert.isObject(msg)
         assert.isNumber(msg.id)
         assert.equal msg.msgtext, "Some message"

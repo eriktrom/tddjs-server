@@ -5,10 +5,12 @@ chatRoom =
   addMessage: (user, msgtext, callback) ->
     deferred = Q.defer()
     process.nextTick (->
+      # TODO: I want create an errors array and pass that to deferred.reject
+      # how do I do that?
       err = new TypeError("user is null") if !user
       err = new TypeError("Message text is null") if !msgtext
       if err
-        deferred.reject(err, true)
+        deferred.reject(err)
 
       if !err
         @messages ?= []
