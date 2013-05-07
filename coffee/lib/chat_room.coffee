@@ -2,7 +2,7 @@ require("./function-bind")
 Q = require('q')
 
 chatRoom =
-  addMessage: (user, msgtext, callback) ->
+  addMessage: (user, msgtext) ->
     deferred = Q.defer()
     process.nextTick (->
       # TODO: I want create an errors array and pass that to deferred.reject
@@ -19,8 +19,8 @@ chatRoom =
         @messages.push(message)
         deferred.resolve(message)
 
-      if typeof callback is "function"
-        callback(err, message)
+      # if typeof callback is "function"
+      #   callback(err, message)
     ).bind(@)
     deferred.promise
 

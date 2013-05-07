@@ -52,7 +52,7 @@ describe "chatRoom", ->
         assert.equal msg.user, "erik"
         done()
 
-    it "should take callback with new msg object old school way", (done) ->
+    it.skip "should take callback with new msg object old school way", (done) ->
       @room.addMessage "erik", "Some message", (e, msg) ->
         assert.isObject(msg)
         assert.isNumber(msg.id)
