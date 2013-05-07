@@ -5,7 +5,7 @@ chai.Assertion.includeStack = true
 
 chatRoom = require("../js/lib/chat_room")
 
-describe "chatRoom.addMessage", ->
+describe "chatRoom#addMessage", ->
   beforeEach ->
     @room = Object.create(chatRoom)
 
@@ -26,4 +26,12 @@ describe "chatRoom.addMessage", ->
   it "should not require a callback", (done) ->
     assert.doesNotThrow =>
       @room.addMessage()
+      done()
+
+  it "should call callback with new data object", (done) ->
+    @room.addMessage "erik", "Some message", (err, data) ->
+      assert.isObject(data)
+      assert.isNumber(data.id)
+      assert.equal data.message, "Some message"
+      assert.equal data.user, "erik"
       done()
