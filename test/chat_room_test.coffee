@@ -2,6 +2,7 @@ chai = require("chai")
 expect = chai.expect
 assert = chai.assert
 # chai.Assertion.includeStack = true
+Q = require('q')
 
 chatRoom = require("../js/lib/chat_room")
 
@@ -60,7 +61,23 @@ describe "chatRoom", ->
         assert.equal msg.user, "erik"
         done()
 
-    it "should assign unique id's to messages", (done) ->
+    it "should assign unique id's to messages(flat .all version)", (done) ->
+      user = "erik"
+
+      room = @room
+      messages = []
+      collect = (msg) -> messages.push(msg)
+
+      Q.all([
+        room.addMessage("erik", "message 1").then(collect),
+        room.addMessage("erik", "message 2").then(collect)
+      ])
+      .then ->
+        assert.notEqual(messages[0].id, messages[1].id)
+        done()
+      .done()
+
+    it "should assign unique id's to messages(nested version)", (done) ->
       user = "erik"
 
       @room.addMessage(user, "message 1").then (msg1) =>
@@ -78,24 +95,31 @@ describe "chatRoom", ->
           assert.deepEqual @room.messages, [msg1, msg2]
           done()
 
-    it "should be asynchronous", (done) ->
+    it.skip "should be asynchronous", (done) ->
       id = null
-      @room.addMessage("erik", "Some message").then (msg) ->
-        id = msg.id
+      room = @room
+      messages = []
 
-      # here, we grab all messages since before the previous one was added
-      # thus, in a synchronous world, msgs.length should eq 1, but in an
-      # asynchronous world, it should still equal 0 b/c if addMessage were
-      # async, it would not run it's callback until the next turn of the event
-      # loop, and thus, until after done() is called. this test therefore proves
-      # that the messages array is still emtpy and that therefore its async
-      #
-      # this test falls under the same category as the previous - namely, it
-      # tests implementation details. it should be removed, we'll use promises
-      # instead
-      @room.getMessagesSince id - 1, (err, msgs) ->
+      room.addMessage("erik", "Some message")
+      .then (msg) ->
+        id = msg.id
+        messages.push(msg)
+
+        # here, we grab all messages since before the previous one was added
+        # thus, in a synchronous world, msgs.length should eq 1, but in an
+        # asynchronous world, it should still equal 0 b/c if addMessage were
+        # async, it would not run it's callback until the next turn of the event
+        # loop, and thus, until after done() is called. this test therefore proves
+        # that the messages array is still emtpy and that therefore its async
+        #
+        # this test falls under the same category as the previous - namely, it
+        # tests implementation details. it should be removed, we'll use promises
+        # instead
+        room.getMessagesSince(id - 1)
+      .then (msgs) ->
         assert.equal msgs.length, 0
         done()
+      .done()
 
     it "should return a promise", (done) ->
       result = @room.addMessage "erik", "message"
@@ -105,22 +129,52 @@ describe "chatRoom", ->
       done()
 
   describe "#getMessagesSince", ->
-    it "should get messages since given id", (done) ->
+    it "should return a promise", (done) ->
+      result = @room.getMessagesSince(0)
+
+      assert.isObject(result)
+      assert.isFunction result.then
+      done()
+
+    it "should get messages since given id (nested version)", (done) ->
       user = "erik"
-      @room.addMessage(user, "message 1").then (msg1) =>
-        @room.addMessage(user, "message 2").then (msg2) =>
-          @room.getMessagesSince msg1.id, (e, msgs) ->
+      @room.addMessage(user, "message 1")
+      .then (msg1) =>
+        @room.addMessage(user, "message 2")
+        .then (msg2) =>
+          @room.getMessagesSince(msg1.id)
+          .then (msgs) ->
             assert.isArray msgs
             assert.deepEqual msgs, [msg2]
             done()
 
+    it "should get messages since given id (flat version)", (done) ->
+      user = "erik"
+      messages = []
+
+
+      Q.all([
+        @room.addMessage(user, "message 1").then((msg) -> messages.push(msg)),
+        @room.addMessage(user, "message 2").then((msg) -> messages.push(msg))
+      ])
+      .then (msgs) =>
+        @room.getMessagesSince(messages[0].id)
+        .then (msgs) ->
+          assert.isArray msgs
+          assert.deepEqual msgs, [messages[1]]
+          done()
+      .done()
+
     it "should yield an emtpy array if the messages array does not exist", (done) ->
-      @room.getMessagesSince 1, (e, msgs) ->
+      @room.getMessagesSince(1)
+      .then (msgs) ->
         assert.deepEqual msgs, []
         done()
 
     it "should yield an empty array if no relevant messages exist", (done) ->
-      @room.addMessage("erik", "message 1").then (msg1) =>
-        @room.getMessagesSince msg1.id, (e, msgs) ->
+      @room.addMessage("erik", "message 1")
+      .then (msg1) =>
+        @room.getMessagesSince(msg1.id)
+        .then (msgs) ->
           assert.deepEqual msgs, []
           done()

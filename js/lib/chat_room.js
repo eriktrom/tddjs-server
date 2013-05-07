@@ -39,12 +39,16 @@ chatRoom = {
     return deferred.promise;
   },
   getMessagesSince: function(id, callback) {
-    var _ref;
+    var deferred, _ref;
 
+    deferred = Q.defer();
     if ((_ref = this.messages) == null) {
       this.messages = [];
     }
-    return callback(null, this.messages.slice(id));
+    process.nextTick((function() {
+      return deferred.resolve(this.messages.slice(id));
+    }).bind(this));
+    return deferred.promise;
   }
 };
 

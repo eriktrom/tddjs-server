@@ -26,7 +26,11 @@ chatRoom =
 
 
   getMessagesSince: (id, callback) ->
+    deferred = Q.defer()
     @messages ?= []
-    callback(null, @messages.slice(id))
+    process.nextTick (->
+      deferred.resolve(@messages.slice(id))
+    ).bind(@)
+    deferred.promise
 
 module.exports = chatRoom
