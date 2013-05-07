@@ -6,7 +6,7 @@ require("./function-bind");
 Q = require('q');
 
 chatRoom = {
-  addMessage: function(user, msgtext) {
+  addMessage: function(user, msgtext, callback) {
     var deferred;
 
     deferred = Q.defer();
@@ -33,7 +33,10 @@ chatRoom = {
           msgtext: msgtext
         };
         this.messages.push(message);
-        return deferred.resolve(message);
+        deferred.resolve(message);
+      }
+      if (typeof callback === "function") {
+        return callback(err, message);
       }
     }).bind(this));
     return deferred.promise;

@@ -14,6 +14,7 @@ describe "chatRoom", ->
     it "should require a username", (done) ->
       promise = @room.addMessage null, "a message"
 
+
       promise.then ->
       ,
       (err) ->
@@ -35,8 +36,17 @@ describe "chatRoom", ->
         @room.addMessage()
         done()
 
+    # TODO: understand how this works
     it "should call callback with new msg object", (done) ->
       @room.addMessage("erik", "Some message").then (msg) ->
+        assert.isObject(msg)
+        assert.isNumber(msg.id)
+        assert.equal msg.msgtext, "Some message"
+        assert.equal msg.user, "erik"
+        done()
+
+    it "should take callback with new msg object old school way", (done) ->
+      @room.addMessage "erik", "Some message", (e, msg) ->
         assert.isObject(msg)
         assert.isNumber(msg.id)
         assert.equal msg.msgtext, "Some message"
