@@ -4,25 +4,35 @@ var chatRoom, id;
 id = 0;
 
 chatRoom = {
-  addMessage: function(user, message, callback) {
-    var data, err;
+  addMessage: function(user, msgtext, callback) {
+    var err, message, _ref;
 
+    if ((_ref = this.messages) == null) {
+      this.messages = [];
+    }
     if (!user) {
       err = new TypeError("user is null");
     }
-    if (!message) {
-      err = new TypeError("message is null");
+    if (!msgtext) {
+      err = new TypeError("Message text is null");
     }
     if (!err) {
-      data = {
+      message = {
         id: id++,
         user: user,
-        message: message
+        msgtext: msgtext
       };
+      this.messages.push(message);
     }
     if (typeof callback === "function") {
-      return callback(err, data);
+      return callback(err, message);
     }
+  },
+  getMessagesSince: function(id, callback) {
+    var err;
+
+    err = null;
+    return callback(err, this.messages);
   }
 };
 
