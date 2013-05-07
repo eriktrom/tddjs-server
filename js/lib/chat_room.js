@@ -6,7 +6,7 @@ require("./function-bind");
 chatRoom = {
   addMessage: function(user, msgtext, callback) {
     return process.nextTick((function() {
-      var err, id, message, _ref;
+      var err, id, message;
 
       if (!user) {
         err = new TypeError("user is null");
@@ -15,9 +15,7 @@ chatRoom = {
         err = new TypeError("Message text is null");
       }
       if (!err) {
-        if ((_ref = this.messages) == null) {
-          this.messages = [];
-        }
+        this.messages || (this.messages = []);
         id = this.messages.length + 1;
         message = {
           id: id,
@@ -32,12 +30,7 @@ chatRoom = {
     }).bind(this));
   },
   getMessagesSince: function(id, callback) {
-    var _ref;
-
-    if ((_ref = this.messages) == null) {
-      this.messages = [];
-    }
-    return callback(null, this.messages.slice(id));
+    return callback(null, (this.messages || []).slice(id));
   }
 };
 

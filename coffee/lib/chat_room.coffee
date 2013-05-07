@@ -3,10 +3,10 @@ require("./function-bind")
 chatRoom =
   addMessage: (user, msgtext, callback) ->
     process.nextTick (->
-      if !user    then err = new TypeError("user is null")
-      if !msgtext then err = new TypeError("Message text is null")
+      err = new TypeError("user is null") if !user
+      err = new TypeError("Message text is null") if !msgtext
       if !err
-        @messages ?= []
+        @messages ||= []
         id = @messages.length + 1
         message = {id, user, msgtext}
         @messages.push(message)
@@ -15,7 +15,6 @@ chatRoom =
     ).bind(@)
 
   getMessagesSince: (id, callback) ->
-    @messages ?= []
-    callback(null, @messages.slice(id))
+    callback(null, (@messages || []).slice(id))
 
 module.exports = chatRoom
