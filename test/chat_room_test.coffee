@@ -63,7 +63,7 @@ describe "chatRoom", ->
 
     it "should be asynchronous", (done) ->
       id = null
-      @room.addMessage "erik", "Some message", (err, msg) ->
+      @room.addMessage("erik", "Some message").then (msg) ->
         id = msg.id
 
       # here, we grab all messages since before the previous one was added

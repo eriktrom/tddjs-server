@@ -2,7 +2,7 @@ require("./function-bind")
 Q = require('q')
 
 chatRoom =
-  addMessage: (user, msgtext, callback) ->
+  addMessage: (user, msgtext) ->
     deferred = Q.defer()
     process.nextTick (->
       err = new TypeError("user is null") if !user
