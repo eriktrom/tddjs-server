@@ -133,6 +133,18 @@ describe "chatRoom", ->
       assert.isFunction(result.then)
       done()
 
+    it "should emit 'message' event", (done) ->
+      message = "oops"
+      @room.addListener "message", (m) ->
+        message = m
+
+      @room.addMessage("erik", "msg")
+      .then (m) ->
+        assert.strictEqual m, message
+        assert.notStrictEqual message, "oops"
+        done()
+      .done()
+
   describe "#getMessagesSince", ->
     it "should return a promise", (done) ->
       result = @room.getMessagesSince(0)

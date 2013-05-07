@@ -36,6 +36,7 @@ chatRoom = Object.create(EventEmitter.prototype, {
             msgtext: msgtext
           };
           this.messages.push(message);
+          this.emit("message", message);
           return deferred.resolve(message);
         }
       }).bind(this));
