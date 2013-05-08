@@ -8,6 +8,29 @@ chatRoom = require("../js/lib/chat_room")
 
 describe "chatRoom", ->
 
+
+  # Long Polling
+  # When the client polls the server for new messages, they're either waiting
+  # and ready to be served, or they're empty, in which case the server should
+  # hold the request until messages are ready
+  #
+  # To do this, we'll implement waitForMessagesSince, which works just like
+  # getMessagesSince, except if no messages are ready it will idly wait for
+  # some to become available
+  #
+  # In order to implement this, we need chatRoom to emit an event when new
+  # messages are added
+  #
+  # New messages are added with room.addMessage, so this is where we'll emit
+  # the event
+  it "should be an event emitter", (done) ->
+    assert.isFunction chatRoom.addListener
+    assert.isFunction chatRoom.emit
+    done()
+
+  # it "should emit an event when new messages are ready", (done) ->
+
+
   beforeEach ->
     @room = Object.create(chatRoom)
 
