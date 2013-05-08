@@ -28,9 +28,6 @@ describe "chatRoom", ->
     assert.isFunction chatRoom.emit
     done()
 
-  # it "should emit an event when new messages are ready", (done) ->
-
-
   beforeEach ->
     @room = Object.create(chatRoom)
 
@@ -125,6 +122,16 @@ describe "chatRoom", ->
       assert.isObject result
       assert.isFunction result.then
       done()
+
+    it "should emit 'message' event when new message is added", (done) ->
+      msgEventDbl = null
+      @room.addListener "message", (msg) ->
+        msgEventDbl = msg
+
+      @room.addMessage("erik", "a message")
+      .then (msg) ->
+        expect(msg).to.eq(msgEventDbl) # strictEqual
+        done()
 
   describe "#getMessagesSince", ->
 

@@ -19,6 +19,7 @@ chatRoom.addMessage = (user, msgtext) ->
       id = @messages.length + 1
       message = {id, user, msgtext}
       @messages.push(message)
+      @emit "message", message
       deferred.resolve(message)
 
   ).bind(@)
