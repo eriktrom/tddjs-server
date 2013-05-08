@@ -24,8 +24,9 @@ chatRoom =
 
   getMessagesSince: (id) ->
     deferred = Q.defer()
-    msgsSinceId = (@messages || []).slice(id)
-    deferred.resolve(msgsSinceId)
+    process.nextTick (->
+      deferred.resolve( (@messages || []).slice(id) )
+    ).bind(@)
     deferred.promise
 
 module.exports = chatRoom

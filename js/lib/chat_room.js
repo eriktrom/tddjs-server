@@ -42,11 +42,12 @@ chatRoom = {
     return deferred.promise;
   },
   getMessagesSince: function(id) {
-    var deferred, msgsSinceId;
+    var deferred;
 
     deferred = Q.defer();
-    msgsSinceId = (this.messages || []).slice(id);
-    deferred.resolve(msgsSinceId);
+    process.nextTick((function() {
+      return deferred.resolve((this.messages || []).slice(id));
+    }).bind(this));
     return deferred.promise;
   }
 };

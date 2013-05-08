@@ -59,15 +59,15 @@ describe "chatRoom", ->
 
     it "(non nested) should assign unique id's to messages", (done) ->
       user = "erik"
-      heldMessages = []
-      holdMsg = (msg) -> heldMessages.push(msg)
+      heldMsgs = []
+      holdMsg = (msg) -> heldMsgs.push(msg)
 
       Q.all([
         @room.addMessage(user, "message 1").then(holdMsg),
         @room.addMessage(user, "message 2").then(holdMsg)
       ])
       .done ->
-        assert.notEqual heldMessages[0].id, heldMessages[1].id
+        assert.notEqual heldMsgs[0].id, heldMsgs[1].id
         done()
 
     it "should add the message to the room's messages array", (done) ->
@@ -82,24 +82,18 @@ describe "chatRoom", ->
           assert.deepEqual @room.messages, [msg1, msg2]
           done()
 
-    it "should be asynchronous", (done) ->
-      id = null
-      @room.addMessage "erik", "Some message", (err, msg) ->
-        id = msg.id
-
-      # here, we grab all messages since before the previous one was added
-      # thus, in a synchronous world, msgs.length should eq 1, but in an
-      # asynchronous world, it should still equal 0 b/c if addMessage were
-      # async, it would not run it's callback until the next turn of the event
-      # loop, and thus, until after done() is called. this test therefore proves
-      # that the messages array is still emtpy and that therefore its async
-      #
-      # this test falls under the same category as the previous - namely, it
-      # tests implementation details. it should be removed, we'll use promises
-      # instead
-      @room.getMessagesSince(id - 1)
-      .then (msgs) ->
-        assert.equal msgs.length, 0
+    it.skip "should be asynchronous", (done) ->
+      heldMsgs = []
+      heldMsgsSince = []
+      holdMsg = (msg) -> heldMsgs.push(msg)
+      holdMsgSince = (msgs) -> heldMsgsSince.push(msgs[0])
+      Q.all([
+        @room.addMessage("erik", "Some message").then(holdMsg),
+        @room.getMessagesSince(heldMsgs.length - 1).then(holdMsgSince)
+      ])
+      .done ->
+        assert.equal heldMsgsSince.length, 0
+        assert.equal heldMsgs.length, 0
         done()
 
     it "should return a promise", (done) ->
