@@ -2,6 +2,7 @@ chai = require("chai")
 expect = chai.expect
 assert = chai.assert
 # chai.Assertion.includeStack = true
+Q = require("q")
 
 chatRoom = require("../js/lib/chat_room")
 
@@ -55,6 +56,19 @@ describe "chatRoom", ->
         .then (msg2) ->
           assert.notEqual msg1.id, msg2.id
           done()
+
+    it "(non nested) should assign unique id's to messages", (done) ->
+      user = "erik"
+      heldMessages = []
+      holdMsg = (msg) -> heldMessages.push(msg)
+
+      Q.all([
+        @room.addMessage(user, "message 1").then(holdMsg),
+        @room.addMessage(user, "message 2").then(holdMsg)
+      ])
+      .done ->
+        assert.notEqual heldMessages[0].id, heldMessages[1].id
+        done()
 
     it "should add the message to the room's messages array", (done) ->
       @room.addMessage("erik", "message 1")
