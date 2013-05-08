@@ -5,13 +5,12 @@ chatRoom =
   addMessage: (user, msgtext, callback) ->
     deferred = Q.defer()
     process.nextTick (->
-      err = new TypeError("user is null") if !user
-      err = new TypeError("Message text is null") if !msgtext
+      if !user && !msgtext then err = new TypeError("user & msgtext both null")
+      if !err
+        if !user           then err = new TypeError("user is null")
+        if !msgtext        then err = new TypeError("Message text is null")
       if err
         deferred.reject(err)
-        # TODO: if both user and msgtext are null, there ought to be an array
-        # of errors. I tried this, but reject can only take an error, not an
-        # array, so what do I do?
 
       if !err
         @messages ||= []

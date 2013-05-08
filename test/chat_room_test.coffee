@@ -25,6 +25,13 @@ describe "chatRoom", ->
         expect(err).to.be.instanceOf(TypeError)
         done()
 
+    it "should require a message and a username", (done) ->
+      @room.addMessage()
+      .then null, (err) ->
+        assert.isNotNull(err)
+        expect(err).to.be.instanceOf(TypeError)
+        done()
+
     it "should not require a callback", (done) ->
       assert.doesNotThrow =>
         @room.addMessage("erik", "a message")

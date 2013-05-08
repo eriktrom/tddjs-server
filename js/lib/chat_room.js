@@ -13,11 +13,16 @@ chatRoom = {
     process.nextTick((function() {
       var err, id, message;
 
-      if (!user) {
-        err = new TypeError("user is null");
+      if (!user && !msgtext) {
+        err = new TypeError("user & msgtext both null");
       }
-      if (!msgtext) {
-        err = new TypeError("Message text is null");
+      if (!err) {
+        if (!user) {
+          err = new TypeError("user is null");
+        }
+        if (!msgtext) {
+          err = new TypeError("Message text is null");
+        }
       }
       if (err) {
         deferred.reject(err);
