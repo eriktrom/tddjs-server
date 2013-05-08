@@ -22,10 +22,10 @@ chatRoom =
     ).bind(@)
     deferred.promise
 
-  getMessagesSince: (id, callback) ->
+  getMessagesSince: (id) ->
     deferred = Q.defer()
-    callback(null, (@messages || []).slice(id)) if typeof callback is "function"
-    deferred.resolve((@messages || []).slice(id))
+    msgsSinceId = (@messages || []).slice(id)
+    deferred.resolve(msgsSinceId)
     deferred.promise
 
 module.exports = chatRoom

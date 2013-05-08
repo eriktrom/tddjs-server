@@ -41,14 +41,12 @@ chatRoom = {
     }).bind(this));
     return deferred.promise;
   },
-  getMessagesSince: function(id, callback) {
-    var deferred;
+  getMessagesSince: function(id) {
+    var deferred, msgsSinceId;
 
     deferred = Q.defer();
-    if (typeof callback === "function") {
-      callback(null, (this.messages || []).slice(id));
-    }
-    deferred.resolve((this.messages || []).slice(id));
+    msgsSinceId = (this.messages || []).slice(id);
+    deferred.resolve(msgsSinceId);
     return deferred.promise;
   }
 };

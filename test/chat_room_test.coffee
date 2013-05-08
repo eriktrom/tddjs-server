@@ -97,7 +97,8 @@ describe "chatRoom", ->
       # this test falls under the same category as the previous - namely, it
       # tests implementation details. it should be removed, we'll use promises
       # instead
-      @room.getMessagesSince id - 1, (err, msgs) ->
+      @room.getMessagesSince(id - 1)
+      .then (msgs) ->
         assert.equal msgs.length, 0
         done()
 
