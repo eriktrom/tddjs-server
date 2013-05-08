@@ -2,7 +2,7 @@ require("./function-bind")
 Q = require("q")
 
 chatRoom =
-  addMessage: (user, msgtext, callback) ->
+  addMessage: (user, msgtext) ->
     deferred = Q.defer()
     process.nextTick (->
       if !user && !msgtext then err = new TypeError("user & msgtext both null")
@@ -19,7 +19,6 @@ chatRoom =
         @messages.push(message)
         deferred.resolve(message)
 
-      callback(err, message) if typeof callback is "function"
     ).bind(@)
     deferred.promise
 

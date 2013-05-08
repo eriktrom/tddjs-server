@@ -49,18 +49,22 @@ describe "chatRoom", ->
     it "should assign unique id's to messages", (done) ->
       user = "erik"
 
-      @room.addMessage user, "message 1", (e, msg1) =>
-        @room.addMessage user, "message 2", (e, msg2) ->
+      @room.addMessage(user, "message 1")
+      .then (msg1) =>
+        @room.addMessage(user, "message 2")
+        .then (msg2) ->
           assert.notEqual msg1.id, msg2.id
           done()
 
     it "should add the message to the room's messages array", (done) ->
-      @room.addMessage "erik", "message 1", (e, msg1) =>
+      @room.addMessage("erik", "message 1")
+      .then (msg1) =>
         # checking the @room.messages array directly is frowned upon as it
         # tests implementation details that we don't really care about
         # and makes our test fragile
         assert.deepEqual @room.messages, [msg1]
-        @room.addMessage "erik", "message 2", (e, msg2) =>
+        @room.addMessage("erik", "message 2")
+        .then (msg2) =>
           assert.deepEqual @room.messages, [msg1, msg2]
           done()
 
@@ -93,8 +97,10 @@ describe "chatRoom", ->
   describe "#getMessagesSince", ->
     it "should get messages since given id", (done) ->
       user = "erik"
-      @room.addMessage user, "message 1", (e, msg1) =>
-        @room.addMessage user, "message 2", (e, msg2) =>
+      @room.addMessage(user, "message 1")
+      .then (msg1) =>
+        @room.addMessage(user, "message 2")
+        .then (msg2) =>
           @room.getMessagesSince msg1.id, (e, msgs) ->
             assert.isArray msgs
             assert.deepEqual msgs, [msg2]
@@ -106,7 +112,8 @@ describe "chatRoom", ->
         done()
 
     it "should yield an empty array if no relevant messages exist", (done) ->
-      @room.addMessage "erik", "message 1", (e, msg1) =>
+      @room.addMessage("erik", "message 1")
+      .then (msg1) =>
         @room.getMessagesSince msg1.id, (e, msgs) ->
           assert.deepEqual msgs, []
           done()
