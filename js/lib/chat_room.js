@@ -55,4 +55,8 @@ chatRoom.getMessagesSince = function(id) {
   return deferred.promise;
 };
 
+chatRoom.waitForMessagesSince = function(id) {
+  return this.getMessagesSince(id);
+};
+
 module.exports = chatRoom;

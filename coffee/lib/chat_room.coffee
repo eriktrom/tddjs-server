@@ -32,4 +32,7 @@ chatRoom.getMessagesSince = (id) ->
   ).bind(@)
   deferred.promise
 
+chatRoom.waitForMessagesSince = (id) ->
+  @getMessagesSince(id)
+
 module.exports = chatRoom
