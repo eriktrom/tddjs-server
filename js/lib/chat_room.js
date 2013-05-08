@@ -27,9 +27,6 @@ chatRoom.addMessage = function(user, msgtext) {
         err = new TypeError("Message text is null");
       }
     }
-    if (err) {
-      deferred.reject(err);
-    }
     if (!err) {
       this.messages || (this.messages = []);
       id = this.messages.length + 1;
@@ -41,6 +38,8 @@ chatRoom.addMessage = function(user, msgtext) {
       this.messages.push(message);
       this.emit("message", message);
       return deferred.resolve(message);
+    } else if (err) {
+      return deferred.reject(err);
     }
   }).bind(this));
   return deferred.promise;

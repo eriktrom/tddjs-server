@@ -11,8 +11,6 @@ chatRoom.addMessage = (user, msgtext) ->
     if !err
       if !user           then err = new TypeError("user is null")
       if !msgtext        then err = new TypeError("Message text is null")
-    if err
-      deferred.reject(err)
 
     if !err
       @messages ||= []
@@ -21,6 +19,8 @@ chatRoom.addMessage = (user, msgtext) ->
       @messages.push(message)
       @emit "message", message
       deferred.resolve(message)
+    else if err
+      deferred.reject(err)
 
   ).bind(@)
   deferred.promise
