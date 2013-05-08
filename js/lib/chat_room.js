@@ -7,55 +7,52 @@ Q = require("q");
 
 EventEmitter = require("events").EventEmitter;
 
-chatRoom = Object.create(EventEmitter.prototype, {
-  addMessage: {
-    value: function(user, msgtext) {
-      var deferred;
+chatRoom = Object.create(EventEmitter.prototype);
 
-      deferred = Q.defer();
-      process.nextTick((function() {
-        var err, id, message;
+chatRoom.addMessage = function(user, msgtext) {
+  var deferred;
 
-        if (!user && !msgtext) {
-          err = new TypeError("user & msgtext both null");
-        }
-        if (!err) {
-          if (!user) {
-            err = new TypeError("user is null");
-          }
-          if (!msgtext) {
-            err = new TypeError("Message text is null");
-          }
-        }
-        if (err) {
-          deferred.reject(err);
-        }
-        if (!err) {
-          this.messages || (this.messages = []);
-          id = this.messages.length + 1;
-          message = {
-            id: id,
-            user: user,
-            msgtext: msgtext
-          };
-          this.messages.push(message);
-          return deferred.resolve(message);
-        }
-      }).bind(this));
-      return deferred.promise;
+  deferred = Q.defer();
+  process.nextTick((function() {
+    var err, id, message;
+
+    if (!user && !msgtext) {
+      err = new TypeError("user & msgtext both null");
     }
-  },
-  getMessagesSince: {
-    value: function(id) {
-      var deferred;
-
-      deferred = Q.defer();
-      process.nextTick((function() {
-        return deferred.resolve((this.messages || []).slice(id));
-      }).bind(this));
-      return deferred.promise;
+    if (!err) {
+      if (!user) {
+        err = new TypeError("user is null");
+      }
+      if (!msgtext) {
+        err = new TypeError("Message text is null");
+      }
     }
-  }
-});
+    if (err) {
+      deferred.reject(err);
+    }
+    if (!err) {
+      this.messages || (this.messages = []);
+      id = this.messages.length + 1;
+      message = {
+        id: id,
+        user: user,
+        msgtext: msgtext
+      };
+      this.messages.push(message);
+      return deferred.resolve(message);
+    }
+  }).bind(this));
+  return deferred.promise;
+};
+
+chatRoom.getMessagesSince = function(id) {
+  var deferred;
+
+  deferred = Q.defer();
+  process.nextTick((function() {
+    return deferred.resolve((this.messages || []).slice(id));
+  }).bind(this));
+  return deferred.promise;
+};
 
 module.exports = chatRoom;
