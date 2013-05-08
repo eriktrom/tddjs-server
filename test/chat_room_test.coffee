@@ -130,13 +130,15 @@ describe "chatRoom", ->
             done()
 
     it "should yield an emtpy array if the messages array does not exist", (done) ->
-      @room.getMessagesSince 1, (e, msgs) ->
+      @room.getMessagesSince(1)
+      .then (msgs) ->
         assert.deepEqual msgs, []
         done()
 
     it "should yield an empty array if no relevant messages exist", (done) ->
       @room.addMessage("erik", "message 1")
       .then (msg1) =>
-        @room.getMessagesSince msg1.id, (e, msgs) ->
+        @room.getMessagesSince(msg1.id)
+        .then (msgs) ->
           assert.deepEqual msgs, []
           done()
