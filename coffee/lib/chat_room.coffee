@@ -43,6 +43,7 @@ chatRoom =
         id = @messages.length + 1
         message = {id, user, msgtext}
         @messages.push(message)
+        deferred.resolve(message)
 
       callback(err, message) if typeof callback is "function"
     ).bind(@)

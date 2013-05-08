@@ -36,6 +36,7 @@ chatRoom = {
           msgtext: msgtext
         };
         this.messages.push(message);
+        deferred.resolve(message);
       }
       if (typeof callback === "function") {
         return callback(err, message);
