@@ -48,6 +48,7 @@ chatRoom = {
     if (typeof callback === "function") {
       callback(null, (this.messages || []).slice(id));
     }
+    deferred.resolve((this.messages || []).slice(id));
     return deferred.promise;
   }
 };

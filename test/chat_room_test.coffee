@@ -123,7 +123,8 @@ describe "chatRoom", ->
       .then (msg1) =>
         @room.addMessage(user, "message 2")
         .then (msg2) =>
-          @room.getMessagesSince msg1.id, (e, msgs) ->
+          @room.getMessagesSince(msg1.id)
+          .then (msgs) ->
             assert.isArray msgs
             assert.deepEqual msgs, [msg2]
             done()
