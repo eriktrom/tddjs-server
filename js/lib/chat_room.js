@@ -42,7 +42,13 @@ chatRoom = {
     return deferred.promise;
   },
   getMessagesSince: function(id, callback) {
-    return callback(null, (this.messages || []).slice(id));
+    var deferred;
+
+    deferred = Q.defer();
+    if (typeof callback === "function") {
+      callback(null, (this.messages || []).slice(id));
+    }
+    return deferred.promise;
   }
 };
 
