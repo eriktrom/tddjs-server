@@ -54,9 +54,7 @@ chatRoom.waitForMessagesSince = function(id) {
     if (msgs.length > 0) {
       return deferred.resolve(msgs);
     } else {
-      return _this.addListener("message", function(message) {
-        return deferred.resolve([message]);
-      });
+      return _this.addListener("message", function() {});
     }
   }).done();
   return deferred.promise;

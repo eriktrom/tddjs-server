@@ -29,7 +29,7 @@ chatRoom.waitForMessagesSince = (id) ->
   .then (msgs) =>
     if msgs.length > 0 then deferred.resolve(msgs)
     else
-      @addListener "message", (message) -> deferred.resolve([message])
+      @addListener "message", ->
   .done()
   deferred.promise
 
