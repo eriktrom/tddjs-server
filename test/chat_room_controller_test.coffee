@@ -89,36 +89,25 @@ describe "chatRoomController", ->
       assert.deepEqual args[1], @dataDbl.data.message
       done()
 
-    it "should write status http headers immediately when post is resolved", (done) ->
+    it "should call respond immediately when #post is resolved", (done) ->
       @controller.post()
       @sendRequest(@dataDbl)
       @addMessageDeferredDbl.resolve {}
+      @controller.respond = stub()
 
       process.nextTick =>
         Q.delay(0)
         .then =>
-          assert.ok @resDbl.writeHead.called
-          assert.deepEqual @resDbl.writeHead.args[0], 201
-          done()
-        .done()
-
-    it "should close the connection", (done) ->
-      @controller.post()
-      @sendRequest(@dataDbl)
-      @addMessageDeferredDbl.resolve {}
-
-      process.nextTick =>
-        Q.delay(0)
-        .then =>
-          assert.ok @resDbl.end.called
+          assert.ok @controller.respond.called
           done()
         .done()
 
     it "should not respond immediately", (done) ->
       @controller.post()
       @sendRequest(@dataDbl)
+      @controller.respond = stub()
 
-      expect(@resDbl.end.called).to.be.false
+      assert.ok !!!@controller.respond.called
       done()
 
   describe "#get", ->
