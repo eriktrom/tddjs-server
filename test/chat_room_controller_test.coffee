@@ -9,17 +9,25 @@ EventEmitter = require("events").EventEmitter
 stub = require("../js/lib/stub")
 
 controllerSetUp = ->
-  # stub the request and response (request is an event emitter)
+  # stub the request as an event emitter
   @reqDbl = new EventEmitter()
+  # set the headers we'll be receiving from comet client by default
+  @reqDbl.headers = {"x-access-token": ""}
+  # stub the response
   @resDbl = {writeHead: stub(), end: stub()}
   # create real controller, passing it reqDbl & resDbl
   @controller = chatRoomController.create(@reqDbl, @resDbl)
-  @jsonParse = JSON.parse
+
+  # stub methods on chatRoom to return promises we can control in our tests here
+  @addMessageDeferredDbl = Q.defer()
+  @waitForMessagesSinceDeferredDbl = Q.defer()
+  @controller.chatRoom =
+    addMessage: stub(@addMessageDeferredDbl.promise)
+    waitForMessagesSince: stub(@waitForMessagesSinceDeferredDbl.promise)
 
   # stub out some data to be returned by JSON.parse
   @dataDbl = {data: {user: "erik", message: "sup"}}
-  @addMessageDeferredDbl = Q.defer()
-  @controller.chatRoom = {addMessage: stub(@addMessageDeferredDbl.promise)}
+  # fake the incoming request
   @sendRequest = (data) ->
     # tddjs.ajax tools build in prev chpts currently only support URL encoded
     # data, so lets encode it to fit
@@ -29,6 +37,8 @@ controllerSetUp = ->
     @reqDbl.emit("data", strDbl.substring(strDbl.length/2))
     @reqDbl.emit("end")
 
+  # hold onto me!
+  @jsonParse = JSON.parse
 
 controllerTearDown = ->
   JSON.parse = @jsonParse
@@ -113,7 +123,6 @@ describe "chatRoomController", ->
   describe "#get", ->
 
     it "should return all available messages on for first incoming request", (done) ->
-      @reqDbl.headers = {"x-access-token": ""}
       subject = @controller.chatRoom.waitForMessagesSince = stub()
 
       @controller.get()
