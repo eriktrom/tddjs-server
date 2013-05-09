@@ -15,8 +15,10 @@ chatRoomController =
     @request.addListener "end", (->
       data = JSON.parse(decodeURI(body)).data
       @chatRoom.addMessage(data.user, data.message)
-      @response.writeHead(201)
-      @response.end()
+      .then =>
+        @response.writeHead(201)
+        @response.end()
+      .done()
     ).bind(@)
 
 module.exports = chatRoomController

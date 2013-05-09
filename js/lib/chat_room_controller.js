@@ -22,12 +22,14 @@ chatRoomController = {
       return body += chunk;
     });
     return this.request.addListener("end", (function() {
-      var data;
+      var data,
+        _this = this;
 
       data = JSON.parse(decodeURI(body)).data;
-      this.chatRoom.addMessage(data.user, data.message);
-      this.response.writeHead(201);
-      return this.response.end();
+      return this.chatRoom.addMessage(data.user, data.message).then(function() {
+        _this.response.writeHead(201);
+        return _this.response.end();
+      }).done();
     }).bind(this));
   }
 };

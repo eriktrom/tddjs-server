@@ -2,8 +2,7 @@
 chai = require("chai")
 expect = chai.expect
 assert = chai.assert
-chai.Assertion.includeStack = true
-
+Q = require("q")
 
 chatRoomController = require('../js/lib/chat_room_controller')
 EventEmitter = require("events").EventEmitter
@@ -57,7 +56,8 @@ describe "chatRoomController", ->
     beforeEach ->
       # stub out some data to be returned by JSON.parse
       @dataDbl = {data: {user: "erik", message: "sup"}}
-      @controller.chatRoom = {addMessage: stub()}
+      deferredDbl = @addMessageDeferredDbl = Q.defer()
+      @controller.chatRoom = {addMessage: stub(deferredDbl.promise)}
       @sendRequest = (data) ->
         # tddjs.ajax tools build in prev chpts currently only support URL encoded
         # data, so lets encode it to fit
@@ -90,17 +90,34 @@ describe "chatRoomController", ->
       assert.deepEqual args[1], @dataDbl.data.message
       done()
 
-    it "should write the status http header", (done) ->
+    it "should write status http headers immediately when post is resolved", (done) ->
       @controller.post()
       @sendRequest(@dataDbl)
+      @addMessageDeferredDbl.resolve {}
 
-      assert.ok @resDbl.writeHead.called
-      assert.deepEqual @resDbl.writeHead.args[0], 201
-      done()
+      process.nextTick =>
+        Q.delay(0)
+        .then =>
+          assert.ok @resDbl.writeHead.called
+          assert.deepEqual @resDbl.writeHead.args[0], 201
+          done()
+        .done()
 
     it "should close the connection", (done) ->
       @controller.post()
       @sendRequest(@dataDbl)
+      @addMessageDeferredDbl.resolve {}
 
-      assert.ok @resDbl.end.called
+      process.nextTick =>
+        Q.delay(0)
+        .then =>
+          assert.ok @resDbl.end.called
+          done()
+        .done()
+
+    it "should not respond immediately", (done) ->
+      @controller.post()
+      @sendRequest(@dataDbl)
+
+      expect(@resDbl.end.called).to.be.false
       done()
