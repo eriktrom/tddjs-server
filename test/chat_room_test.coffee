@@ -202,3 +202,24 @@ describe "chatRoom", ->
           expect(@room.addListener.args[1]).to.be.a "function"
           done()
         .done()
+
+    it "should resolve with a new message when message is added to empty room", (done) ->
+      # empty room means @room.messages is []
+      userDbl = "erik"
+      msgtextDbl = "Are you waiting for this?"
+
+      @room.waitForMessagesSince(0)
+      .then (msgs) ->
+        expect(msgs).to.be.an "array"
+        expect(msgs.length).to.eq 1
+        expect(msgs[0].user).to.eq userDbl
+        expect(msgs[0].msgtext).to.eq msgtextDbl
+        done()
+      .done()
+
+      process.nextTick =>
+        Q.delay(0)
+        .then =>
+          @room.addMessage(userDbl, msgtextDbl)
+        .done()
+
