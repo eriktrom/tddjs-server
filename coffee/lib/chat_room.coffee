@@ -6,7 +6,7 @@ chatRoom = Object.create EventEmitter::
 chatRoom.addMessage = (user, msgtext) ->
   deferred = Q.defer()
   process.nextTick =>
-    err = chatRoomPrivateMethods.addMessageErr(user, msgtext)
+    err = addMessageErr(user, msgtext)
     if err then deferred.reject(err)
     else
       @messages ||= []
@@ -26,15 +26,15 @@ chatRoom.getMessagesSince = (id) ->
 chatRoom.waitForMessagesSince = (id) ->
   @getMessagesSince(id)
 
-# where do I put private methods? non-exported? non-tested helpers?
-chatRoomPrivateMethods = Object.create
-chatRoomPrivateMethods.addMessageErr = (user, msgtext) ->
+module.exports = chatRoom
+
+
+addMessageErr = (user, msgtext) ->
   if !user && !msgtext then err = new TypeError("user & msgtext both null")
   if !err
     if !user           then err = new TypeError("user is null")
     if !msgtext        then err = new TypeError("Message text is null")
   err
-
-module.exports = chatRoom
-
-
+# ^^ any functions defined within the scope of this file are not public in node
+# perhaps my own convention for private methods then should be two spaces after
+# module.exports, then private methods
