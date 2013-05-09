@@ -1,15 +1,15 @@
 chai = require("chai")
+# chai.Assertion.includeStack = true
 expect = chai.expect
 assert = chai.assert
-# chai.Assertion.includeStack = true
 Q = require("q")
-stub = require("../js/lib/stub")
 
+stub = require("../js/lib/stub")
 chatRoom = require("../js/lib/chat_room")
 
 describe "chatRoom", ->
 
-  # Long Polling
+  # Long Polling - Event Emitters
     # When the client polls the server for new messages, they're either waiting
     # and ready to be served, or they're empty, in which case the server should
     # hold the request until messages are ready
