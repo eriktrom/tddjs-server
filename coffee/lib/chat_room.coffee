@@ -25,11 +25,15 @@ chatRoom.getMessagesSince = (id) ->
 
 chatRoom.waitForMessagesSince = (id) ->
   deferred = Q.defer()
+  thisMsg = null
   @getMessagesSince(id)
   .then (msgs) =>
     if msgs.length > 0 then deferred.resolve(msgs)
     else
-      @addListener "message", (message) -> deferred.resolve([message])
+      listener = (message) =>
+        deferred.resolve([message])
+        @removeListener "message", listener
+      @addListener "message", listener
   .done()
   deferred.promise
 

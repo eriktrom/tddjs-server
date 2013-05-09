@@ -188,7 +188,7 @@ describe "chatRoom", ->
         done()
       .done()
 
-    it "should add listener when no messages", (done) ->
+    it "should add listener for 'messages' when no messages", (done) ->
       @room.addListener = stub()
       @room.getMessagesSince = stub Q([])
 
@@ -214,6 +214,22 @@ describe "chatRoom", ->
         expect(msgs.length).to.eq 1
         expect(msgs[0].user).to.eq userDbl
         expect(msgs[0].msgtext).to.eq msgtextDbl
+        done()
+      .done()
+
+      process.nextTick =>
+        Q.delay(0)
+        .then =>
+          @room.addMessage(userDbl, msgtextDbl)
+        .done()
+
+    it "should remove listener for 'messages' once resolved", (done) ->
+      userDbl = "erik"
+      msgtextDbl = "Are you waiting for this?"
+
+      @room.waitForMessagesSince(0)
+      .then (msgs) =>
+        expect(@room.listeners("message").length).to.eq 0
         done()
       .done()
 
