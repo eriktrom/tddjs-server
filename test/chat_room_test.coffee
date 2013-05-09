@@ -176,7 +176,7 @@ describe "chatRoom", ->
       #    'message' event, and the returned promise will resolve once a new
       #    message is added
 
-    it "should yield existing messages", (done) ->
+    it "should be immediately resolved if messages are available", (done) ->
       deferred = Q.defer()
       deferred.resolve [{id: 43}]
 
@@ -186,3 +186,21 @@ describe "chatRoom", ->
       .then (msgs) ->
         expect(msgs).to.deep.eq [{id: 43}]
         done()
+      .done()
+
+    it "should add listener when no messages", (done) ->
+      @room.addListener = stub()
+      deferred = Q.defer()
+      deferred.resolve []
+      @room.getMessagesSince = stub(deferred.promise)
+
+      @room.waitForMessagesSince(0)
+
+      process.nextTick =>
+        Q.delay(0)
+        .then =>
+          expect(@room.addListener.called).to.be.true
+          expect(@room.addListener.args[0]).to.eq "message"
+          expect(@room.addListener.args[1]).to.be.a "function"
+          done()
+        .done()

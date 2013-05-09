@@ -24,7 +24,14 @@ chatRoom.getMessagesSince = (id) ->
   deferred.promise
 
 chatRoom.waitForMessagesSince = (id) ->
+  deferred = Q.defer()
   @getMessagesSince(id)
+  .then (msgs) =>
+    if msgs.length > 0 then deferred.resolve(msgs)
+    else
+      @addListener "message", (message) -> deferred.resolve([message])
+  .done()
+  deferred.promise
 
 module.exports = chatRoom
 
