@@ -31,9 +31,10 @@ chatRoomController = {
     });
   },
   get: function() {
-    if (this.request.headers["x-access-token"] === "") {
-      return this.chatRoom.waitForMessagesSince(0);
-    }
+    var id;
+
+    id = this.request.headers["x-access-token"] || "0";
+    return this.chatRoom.waitForMessagesSince(id);
   }
 };
 

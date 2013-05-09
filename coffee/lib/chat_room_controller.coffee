@@ -19,7 +19,7 @@ chatRoomController =
       .done()
 
   get: ->
-    if @request.headers["x-access-token"] is ""
-      @chatRoom.waitForMessagesSince(0)
+    id = @request.headers["x-access-token"] || "0"
+    @chatRoom.waitForMessagesSince(id)
 
 module.exports = chatRoomController

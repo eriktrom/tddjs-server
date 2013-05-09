@@ -130,5 +130,15 @@ describe "chatRoomController", ->
       @controller.get()
 
       assert.ok subject.called
-      assert.strictEqual subject.args[0], 0
+      expect(subject.args[0]).to.eq "0"
+      done()
+
+    it "should wait for messages since x-access-token", (done) ->
+      @reqDbl.headers = {"x-access-token": "2"}
+      subject = @controller.chatRoom.waitForMessagesSince = stub()
+
+      @controller.get()
+
+      assert.ok subject.called
+      expect(subject.args[0]).to.eq "2"
       done()
