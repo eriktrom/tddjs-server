@@ -14,8 +14,7 @@ chatRoomController =
       data = JSON.parse(decodeURI(body)).data
       @chatRoom.addMessage(data.user, data.message)
       .then =>
-        @response.writeHead(201)
-        @response.end()
+        @respond(201)
       .done()
 
   get: ->
@@ -24,5 +23,6 @@ chatRoomController =
 
   respond: (status) ->
     @response.writeHead(status)
+    @response.end()
 
 module.exports = chatRoomController

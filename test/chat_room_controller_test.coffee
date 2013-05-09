@@ -152,4 +152,8 @@ describe "chatRoomController", ->
       expect(@resDbl.writeHead.args[0]).to.eq 201
       done()
 
+    it "should close connection", (done) ->
+      @controller.respond(201)
 
+      expect(@resDbl.end.called).to.be.true
+      done()

@@ -25,8 +25,7 @@ chatRoomController = {
 
       data = JSON.parse(decodeURI(body)).data;
       return _this.chatRoom.addMessage(data.user, data.message).then(function() {
-        _this.response.writeHead(201);
-        return _this.response.end();
+        return _this.respond(201);
       }).done();
     });
   },
@@ -37,7 +36,8 @@ chatRoomController = {
     return this.chatRoom.waitForMessagesSince(id);
   },
   respond: function(status) {
-    return this.response.writeHead(status);
+    this.response.writeHead(status);
+    return this.response.end();
   }
 };
 
