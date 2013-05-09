@@ -10,11 +10,24 @@ stub = require("../js/lib/stub")
 
 controllerSetUp = ->
   # stub the request and response (request is an event emitter)
-  reqDbl = @reqDbl = new EventEmitter()
-  resDbl = @resDbl = {writeHead: stub(), end: stub()}
+  @reqDbl = new EventEmitter()
+  @resDbl = {writeHead: stub(), end: stub()}
   # create real controller, passing it reqDbl & resDbl
-  @controller = chatRoomController.create(reqDbl, resDbl)
+  @controller = chatRoomController.create(@reqDbl, @resDbl)
   @jsonParse = JSON.parse
+
+  # stub out some data to be returned by JSON.parse
+  @dataDbl = {data: {user: "erik", message: "sup"}}
+  @addMessageDeferredDbl = Q.defer()
+  @controller.chatRoom = {addMessage: stub(@addMessageDeferredDbl.promise)}
+  @sendRequest = (data) ->
+    # tddjs.ajax tools build in prev chpts currently only support URL encoded
+    # data, so lets encode it to fit
+    strDbl = encodeURI(JSON.stringify(@dataDbl))
+    # emit simple URL encoded JSON string in two chunks, then emit end event
+    @reqDbl.emit("data", strDbl.substring(0, strDbl.length/2))
+    @reqDbl.emit("data", strDbl.substring(strDbl.length/2))
+    @reqDbl.emit("end")
 
 
 controllerTearDown = ->
@@ -52,20 +65,6 @@ describe "chatRoomController", ->
           done()
 
   describe "#post", ->
-
-    beforeEach ->
-      # stub out some data to be returned by JSON.parse
-      @dataDbl = {data: {user: "erik", message: "sup"}}
-      deferredDbl = @addMessageDeferredDbl = Q.defer()
-      @controller.chatRoom = {addMessage: stub(deferredDbl.promise)}
-      @sendRequest = (data) ->
-        # tddjs.ajax tools build in prev chpts currently only support URL encoded
-        # data, so lets encode it to fit
-        strDbl = encodeURI(JSON.stringify(@dataDbl))
-        # emit simple URL encoded JSON string in two chunks, then emit end event
-        @reqDbl.emit("data", strDbl.substring(0, strDbl.length/2))
-        @reqDbl.emit("data", strDbl.substring(strDbl.length/2))
-        @reqDbl.emit("end")
 
     it "should retrieve the request body by concatenating its evented chunks", (done) ->
       # stub JSON.parse to return @dataDbl and spy on calls & their arguments
@@ -120,4 +119,16 @@ describe "chatRoomController", ->
       @sendRequest(@dataDbl)
 
       expect(@resDbl.end.called).to.be.false
+      done()
+
+  describe "#get", ->
+
+    it "should return all available messages on for first incoming request", (done) ->
+      @reqDbl.headers = {"x-access-token": ""}
+      subject = @controller.chatRoom.waitForMessagesSince = stub()
+
+      @controller.get()
+
+      assert.ok subject.called
+      assert.strictEqual subject.args[0], 0
       done()
