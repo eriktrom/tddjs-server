@@ -142,3 +142,14 @@ describe "chatRoomController", ->
       assert.ok subject.called
       expect(subject.args[0]).to.eq "2"
       done()
+
+  describe "#respond", ->
+
+    it "should write status code", (done) ->
+      @controller.respond(201)
+
+      expect(@resDbl.writeHead.called).to.be.true
+      expect(@resDbl.writeHead.args[0]).to.eq 201
+      done()
+
+

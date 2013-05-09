@@ -22,4 +22,7 @@ chatRoomController =
     id = @request.headers["x-access-token"] || "0"
     @chatRoom.waitForMessagesSince(id)
 
+  respond: (status) ->
+    @response.writeHead(status)
+
 module.exports = chatRoomController
