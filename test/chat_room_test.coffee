@@ -190,9 +190,7 @@ describe "chatRoom", ->
 
     it "should add listener when no messages", (done) ->
       @room.addListener = stub()
-      deferred = Q.defer()
-      deferred.resolve []
-      @room.getMessagesSince = stub(deferred.promise)
+      @room.getMessagesSince = stub Q([])
 
       @room.waitForMessagesSince(0)
 
