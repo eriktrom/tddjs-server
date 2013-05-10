@@ -123,7 +123,7 @@ describe "chatRoomController", ->
   describe "#get", ->
 
     it "should return all available messages on for first incoming request", (done) ->
-      subject = @controller.chatRoom.waitForMessagesSince = stub()
+      subject = @controller.chatRoom.waitForMessagesSince
 
       @controller.get()
 
@@ -133,7 +133,7 @@ describe "chatRoomController", ->
 
     it "should wait for messages since x-access-token", (done) ->
       @reqDbl.headers = {"x-access-token": "2"}
-      subject = @controller.chatRoom.waitForMessagesSince = stub()
+      subject = @controller.chatRoom.waitForMessagesSince
 
       @controller.get()
 
@@ -155,3 +155,20 @@ describe "chatRoomController", ->
 
       expect(@resDbl.end.called).to.be.true
       done()
+
+    it "should respond with formatted data", (done) ->
+      @controller.respond = stub()
+      messagesDbl = [{user: "erik", message: "hi"}]
+      @waitForMessagesSinceDeferredDbl.resolve(messagesDbl)
+
+      @controller.get()
+
+      process.nextTick =>
+        Q.delay(0)
+        .then =>
+          assert.ok @controller.respond.called
+          args = @controller.respond.args
+          expect(args[0]).to.eq 201
+          expect(args[1].msgBody).to.eq messagesDbl
+          done()
+        .done()

@@ -30,10 +30,15 @@ chatRoomController = {
     });
   },
   get: function() {
-    var id;
+    var id,
+      _this = this;
 
     id = this.request.headers["x-access-token"] || "0";
-    return this.chatRoom.waitForMessagesSince(id);
+    return this.chatRoom.waitForMessagesSince(id).then(function(msgs) {
+      return _this.respond(201, {
+        msgBody: msgs
+      });
+    }).done();
   },
   respond: function(status) {
     this.response.writeHead(status);
