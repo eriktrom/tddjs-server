@@ -133,21 +133,6 @@ describe "chatRoomController", ->
       expect(subject.args[0]).to.eq "2"
       done()
 
-  describe "#respond", ->
-
-    it "should write status code", (done) ->
-      @controller.respond(201)
-
-      expect(@resDbl.writeHead.called).to.be.true
-      expect(@resDbl.writeHead.args[0]).to.eq 201
-      done()
-
-    it "should close connection", (done) ->
-      @controller.respond(201)
-
-      expect(@resDbl.end.called).to.be.true
-      done()
-
     it "should respond with formatted data", (done) ->
       @controller.respond = stub()
       messagesDbl = [{user: "erik", message: "hi"}]
@@ -164,3 +149,18 @@ describe "chatRoomController", ->
           expect(args[1].message).to.eq messagesDbl
           done()
         .done()
+
+  describe "#respond", ->
+
+    it "should write status code", (done) ->
+      @controller.respond(201)
+
+      expect(@resDbl.writeHead.called).to.be.true
+      expect(@resDbl.writeHead.args[0]).to.eq 201
+      done()
+
+    it "should close connection", (done) ->
+      @controller.respond(201)
+
+      expect(@resDbl.end.called).to.be.true
+      done()
