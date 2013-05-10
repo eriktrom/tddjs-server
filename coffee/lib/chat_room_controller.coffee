@@ -27,7 +27,7 @@ chatRoomController =
     .done()
 
   respond: (status, data) ->
-    strData = JSON.stringify(data)
+    strData = JSON.stringify(data) || "{}"
 
     @response.writeHead status,
       "Content-Type": "application/json"

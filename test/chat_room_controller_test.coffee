@@ -168,17 +168,29 @@ describe "chatRoomController", ->
   describe "#respond", ->
 
     it "should write status code", ->
-      @controller.respond(201, @dataDbl)
+      @controller.respond(201)
       expect(@resDbl.writeHead.args[0]).to.eq 201
 
     it "should close connection", ->
-      @controller.respond(201, @dataDbl)
+      @controller.respond(201)
       expect(@resDbl.end.called).to.be.true
 
     it "should write Content-Type as application/json", ->
-      @controller.respond(201, @dataDbl)
+      @controller.respond(201)
       expect(@resDbl.writeHead.args[1]["Content-Type"]).to.eq "application/json"
 
     it "writes header 'Content-Length' as the length of the message", ->
       @controller.respond(201, @dataDbl)
       expect(@resDbl.writeHead.args[1]["Content-Length"]).to.eq @strDataDbl.length
+
+    it "writes Content-Length as 2 when given no data", ->
+      @controller.respond(201)
+      expect(@resDbl.writeHead.args[1]["Content-Length"]).to.eq 2
+    # next 2 tests are the same, just showing coffeescript usage stuff
+    it "writes Content-Length as 2 when given no data (passed CS undefined)", ->
+      @controller.respond(201, undefined)
+      expect(@resDbl.writeHead.args[1]["Content-Length"]).to.eq 2
+
+    it "writes Content-Length as 2 when given no data", ->
+      `this.controller.respond(201, void 0)`
+      expect(@resDbl.writeHead.args[1]["Content-Length"]).to.eq 2
