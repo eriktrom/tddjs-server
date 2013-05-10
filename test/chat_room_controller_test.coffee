@@ -167,22 +167,18 @@ describe "chatRoomController", ->
 
   describe "#respond", ->
 
-    it "should write status code", (done) ->
+    it "should write status code", ->
       @controller.respond(201, @dataDbl)
       expect(@resDbl.writeHead.args[0]).to.eq 201
-      done()
 
-    it "should close connection", (done) ->
+    it "should close connection", ->
       @controller.respond(201, @dataDbl)
       expect(@resDbl.end.called).to.be.true
-      done()
 
-    it "should write Content-Type as application/json", (done) ->
+    it "should write Content-Type as application/json", ->
       @controller.respond(201, @dataDbl)
       expect(@resDbl.writeHead.args[1]["Content-Type"]).to.eq "application/json"
-      done()
 
-    it "writes header 'Content-Length' as the length of the message", (done) ->
+    it "writes header 'Content-Length' as the length of the message", ->
       @controller.respond(201, @dataDbl)
       expect(@resDbl.writeHead.args[1]["Content-Length"]).to.eq @strDataDbl.length
-      done()
