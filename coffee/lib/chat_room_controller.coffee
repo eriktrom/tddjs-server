@@ -21,7 +21,7 @@ chatRoomController =
     id = @request.headers["x-access-token"] || "0"
     @chatRoom.waitForMessagesSince(id)
     .then (msgs) =>
-      @respond(201, {msgBody: msgs})
+      @respond(201, {message: msgs})
     .done()
 
   respond: (status) ->

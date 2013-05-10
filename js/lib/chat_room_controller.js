@@ -36,7 +36,7 @@ chatRoomController = {
     id = this.request.headers["x-access-token"] || "0";
     return this.chatRoom.waitForMessagesSince(id).then(function(msgs) {
       return _this.respond(201, {
-        msgBody: msgs
+        message: msgs
       });
     }).done();
   },

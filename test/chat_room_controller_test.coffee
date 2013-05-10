@@ -9,36 +9,28 @@ EventEmitter = require("events").EventEmitter
 stub = require("../js/lib/stub")
 
 controllerSetUp = ->
-  # stub the request as an event emitter
   @reqDbl = new EventEmitter()
-  # set the headers we'll be receiving from comet client by default
   @reqDbl.headers = {"x-access-token": ""}
-  # stub the response
+
   @resDbl = {writeHead: stub(), end: stub()}
-  # create real controller, passing it reqDbl & resDbl
+
   @controller = chatRoomController.create(@reqDbl, @resDbl)
 
-  # stub methods on chatRoom to return promises we can control in our tests here
-  @addMessageDeferredDbl = Q.defer()
-  @waitForMessagesSinceDeferredDbl = Q.defer()
-  @controller.chatRoom =
-    addMessage: stub(@addMessageDeferredDbl.promise)
-    waitForMessagesSince: stub(@waitForMessagesSinceDeferredDbl.promise)
-
-  # stub out some data to be returned by JSON.parse
   @dataDbl = {data: {user: "erik", message: "sup"}}
-  # fake the incoming request
   @sendRequest = (data) ->
-    # tddjs.ajax tools build in prev chpts currently only support URL encoded
-    # data, so lets encode it to fit
+    # tddjs.ajax tools build in prev chpts currently only support URL encoded data, so lets encode it to fit
     strDbl = encodeURI(JSON.stringify(@dataDbl))
     # emit simple URL encoded JSON string in two chunks, then emit end event
     @reqDbl.emit("data", strDbl.substring(0, strDbl.length/2))
     @reqDbl.emit("data", strDbl.substring(strDbl.length/2))
     @reqDbl.emit("end")
-
-  # hold onto me!
   @jsonParse = JSON.parse
+
+  @addMessageDeferredDbl = Q.defer()
+  @waitForMessagesSinceDeferredDbl = Q.defer()
+  @controller.chatRoom =
+    addMessage: stub(@addMessageDeferredDbl.promise)
+    waitForMessagesSince: stub(@waitForMessagesSinceDeferredDbl.promise)
 
 controllerTearDown = ->
   JSON.parse = @jsonParse
@@ -169,6 +161,6 @@ describe "chatRoomController", ->
           assert.ok @controller.respond.called
           args = @controller.respond.args
           expect(args[0]).to.eq 201
-          expect(args[1].msgBody).to.eq messagesDbl
+          expect(args[1].message).to.eq messagesDbl
           done()
         .done()
