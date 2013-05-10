@@ -133,22 +133,36 @@ describe "chatRoomController", ->
       expect(subject.args[0]).to.eq "2"
       done()
 
-    it "should respond with formatted data", (done) ->
-      @controller.respond = stub()
-      messagesDbl = [{user: "erik", message: "hi"}]
-      @waitForMessagesSinceDeferredDbl.resolve(messagesDbl)
+    context "response format", ->
+      beforeEach -> @controller.respond = stub()
 
-      @controller.get()
+      it "should respond with formatted data", (done) ->
+        msgsDbl = [{user: "erik", message: "hi"}]
+        @waitForMessagesSinceDeferredDbl.resolve(msgsDbl)
 
-      process.nextTick =>
-        Q.delay(0)
-        .then =>
-          assert.ok @controller.respond.called
-          args = @controller.respond.args
-          expect(args[0]).to.eq 201
-          expect(args[1].message).to.eq messagesDbl
-          done()
-        .done()
+        @controller.get()
+
+        process.nextTick =>
+          Q.delay(0)
+          .then =>
+            assert.ok @controller.respond.called
+            args = @controller.respond.args
+            expect(args[0]).to.eq 201
+            expect(args[1].message).to.eq msgsDbl
+            done()
+          .done()
+
+      it "includes a token signifying the last message returned in the response", (done) ->
+        @waitForMessagesSinceDeferredDbl.resolve [{id:24}, {id:25}]
+
+        @controller.get()
+
+        process.nextTick =>
+          Q.delay(0)
+          .then =>
+            expect(@controller.respond.args[1].token).to.eq 25
+            done()
+          .done()
 
   describe "#respond", ->
 
