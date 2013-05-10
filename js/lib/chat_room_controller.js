@@ -41,8 +41,14 @@ chatRoomController = {
       });
     }).done();
   },
-  respond: function(status) {
-    this.response.writeHead(status);
+  respond: function(status, data) {
+    var strData;
+
+    strData = JSON.stringify(data);
+    this.response.writeHead(status, {
+      "Content-Type": "application/json",
+      "Content-Length": strData.length
+    });
     return this.response.end();
   }
 };

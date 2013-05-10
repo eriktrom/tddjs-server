@@ -18,11 +18,12 @@ controllerSetUp = ->
 
   @dataDbl = {data: {user: "erik", message: "sup"}}
   @sendRequest = (data) ->
+    @strDataDbl = JSON.stringify(@dataDbl)
     # tddjs.ajax tools build in prev chpts currently only support URL encoded data, so lets encode it to fit
-    strDbl = encodeURI(JSON.stringify(@dataDbl))
+    @encodedStrDataDbl = encodeURI(@strDataDbl)
     # emit simple URL encoded JSON string in two chunks, then emit end event
-    @reqDbl.emit("data", strDbl.substring(0, strDbl.length/2))
-    @reqDbl.emit("data", strDbl.substring(strDbl.length/2))
+    @reqDbl.emit("data", @encodedStrDataDbl.substring(0, @encodedStrDataDbl.length/2))
+    @reqDbl.emit("data", @encodedStrDataDbl.substring(@encodedStrDataDbl.length/2))
     @reqDbl.emit("end")
   @jsonParse = JSON.parse
 
@@ -167,14 +168,21 @@ describe "chatRoomController", ->
   describe "#respond", ->
 
     it "should write status code", (done) ->
-      @controller.respond(201)
-
-      expect(@resDbl.writeHead.called).to.be.true
+      @controller.respond(201, @dataDbl)
       expect(@resDbl.writeHead.args[0]).to.eq 201
       done()
 
     it "should close connection", (done) ->
-      @controller.respond(201)
-
+      @controller.respond(201, @dataDbl)
       expect(@resDbl.end.called).to.be.true
+      done()
+
+    it "should write Content-Type as application/json", (done) ->
+      @controller.respond(201, @dataDbl)
+      expect(@resDbl.writeHead.args[1]["Content-Type"]).to.eq "application/json"
+      done()
+
+    it "writes header 'Content-Length' as the length of the message", (done) ->
+      @controller.respond(201, @dataDbl)
+      expect(@resDbl.writeHead.args[1]["Content-Length"]).to.eq @strDataDbl.length
       done()

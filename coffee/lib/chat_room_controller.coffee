@@ -26,8 +26,12 @@ chatRoomController =
         token: msgs[msgs.length - 1].id
     .done()
 
-  respond: (status) ->
-    @response.writeHead(status)
+  respond: (status, data) ->
+    strData = JSON.stringify(data)
+
+    @response.writeHead status,
+      "Content-Type": "application/json"
+      "Content-Length": strData.length
     @response.end()
 
 module.exports = chatRoomController
