@@ -1,5 +1,7 @@
 http = require('http')
 url = require('url')
+paperboy = require("node-paperboy")
+# TODO: this doesn't work yet, find how to start a node server from a newer book
 
 # require the first module we'll write, dealing w/ request/response logic
 crController = require("./chat_room_controller")
@@ -19,3 +21,10 @@ module.exports = http.createServer (req, res) ->
     controller.chatRoom = room
     # call a method on the resulting controller corresponding to the HTTP method used.
     controller[req.method.toLowerCase()]()
+  else
+    delivery = paperboy.deliver("public", req, res)
+
+    delivery.otherwise ->
+      res.writeHead 404, "Content-Type": "text/html"
+      res.write "<h1>Nothing to see here, move along</h1>"
+      res.close
